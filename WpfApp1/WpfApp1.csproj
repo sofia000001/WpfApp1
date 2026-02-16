@@ -131,7 +131,7 @@
     <Resource Include="Icons\delete.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Screenshots\MainWindow.PNG" />
+    <Resource Include="Screenshots\MainWindow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
