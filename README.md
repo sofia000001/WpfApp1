@@ -76,3 +76,6 @@
 |---------|-----------------|-------------------|----------|
 | Справка | F1 | Справка | Показывает описание всех функций |
 | О программе | - | О программе | Информация о программе |
+
+<img width="586" height="456" alt="screen_1" src="https://github.com/user-attachments/assets/511d2f97-fa53-4bad-bceb-d38580518528" />
+<img width="585" height="458" alt="screen_2" src="https://github.com/user-attachments/assets/c2a967bd-46d1-401b-906b-8591e7cc0dbd" />
