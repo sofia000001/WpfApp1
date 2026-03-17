@@ -63,6 +63,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ErrorHighlightConverter.cs" />
+    <Compile Include="LexicalAnalyzer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -132,6 +134,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Screenshots\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\redo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

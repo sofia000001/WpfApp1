@@ -1,7 +1,7 @@
 ﻿<Window x:Class="WpfApp1.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Текстовый редактор" 
+        Title="Лексический анализатор Java" 
         Height="600" Width="800"
         WindowStartupLocation="CenterScreen"
         MinWidth="600" MinHeight="400">
@@ -19,8 +19,8 @@
         </Grid.RowDefinitions>
 
         <!-- 1. МЕНЮ -->
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,43" Grid.RowSpan="2">
-           <!-- Файл -->
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <!-- Файл -->
             <MenuItem Header="_Файл">
                 <MenuItem Header="_Создать" Click="New_Click"/>
                 <MenuItem Header="_Открыть..." Click="Open_Click"/>
@@ -29,6 +29,7 @@
                 <Separator/>
                 <MenuItem Header="_Выход" Click="Exit_Click"/>
             </MenuItem>
+
             <!-- Правка -->
             <MenuItem Header="_Правка">
                 <MenuItem Header="_Отменить" Click="Undo_Click"/>
@@ -41,6 +42,14 @@
                 <Separator/>
                 <MenuItem Header="Выделить _все" Click="SelectAll_Click"/>
             </MenuItem>
+
+            <!-- Анализ -->
+            <MenuItem Header="_Анализ">
+                <MenuItem Header="_Запустить анализ" Click="RunAnalysis_Click" InputGestureText="F5"/>
+                <Separator/>
+                <MenuItem Header="_Очистить результаты" Click="ClearResults_Click"/>
+            </MenuItem>
+
             <!-- Справка -->
             <MenuItem Header="_Справка">
                 <MenuItem Header="_Справка" Click="Help_Click"/>
@@ -50,9 +59,8 @@
         </Menu>
 
         <!-- 2. ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-        <ToolBarTray Grid.Row="1" Background="WhiteSmoke" Grid.ColumnSpan="2" Margin="0,0,0,501" Grid.RowSpan="2">
+        <ToolBarTray Grid.Row="1" Background="WhiteSmoke" Grid.ColumnSpan="2">
             <ToolBar Band="0" BandIndex="0">
-
                 <!-- Файл -->
                 <Button x:Name="btnNew" ToolTip="Создать (Ctrl+N)" Click="New_Click" Margin="2" Padding="4">
                     <Image Source="Icons/new.png" Width="24" Height="24"/>
@@ -69,9 +77,19 @@
 
                 <Separator/>
 
-                <!-- Правка: Отмена -->
+                <!-- Правка -->
                 <Button x:Name="btnUndo" ToolTip="Отменить (Ctrl+Z)" Click="Undo_Click" Margin="2" Padding="4">
                     <Image Source="Icons/undo.png" Width="24" Height="24"/>
+                </Button>
+                <Button x:Name="btnRedo" ToolTip="Вернуть (Ctrl+Y)" Click="Redo_Click" Margin="2" Padding="4">
+                    <Image Source="Icons/redo.png" Width="24" Height="24"/>
+                </Button>
+
+                <Separator/>
+
+                <!-- Кнопка ПУСК -->
+                <Button x:Name="btnRun" ToolTip="Запустить анализ (F5)" Click="RunAnalysis_Click" Margin="2" Padding="4" Background="LightGreen" Width="40">
+                    <TextBlock Text="Пуск" FontWeight="Bold" Foreground="DarkGreen"/>
                 </Button>
 
                 <Separator/>
@@ -136,26 +154,56 @@
                          Background="LightGray"
                          ShowsPreview="True"/>
 
-            <!-- Область вывода -->
+            <!-- Область вывода с DataGrid -->
             <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1">
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                    <TextBox x:Name="OutputTextBox" 
-                             IsReadOnly="True"
-                             TextWrapping="Wrap"
-                             FontFamily="Consolas"
-                             FontSize="12"
-                             Padding="5"
-                             Background="#F0F0F0"
-                             VerticalAlignment="Stretch"
-                             HorizontalAlignment="Stretch"/>
-                </ScrollViewer>
+                <DataGrid x:Name="ResultsDataGrid" 
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          MouseDoubleClick="ResultsDataGrid_MouseDoubleClick"
+                          Background="#F0F0F0"
+                          FontFamily="Consolas"
+                          FontSize="12"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Код" Binding="{Binding Code}" Width="50"/>
+
+                        <DataGridTextColumn Header="Тип лексемы" Binding="{Binding Type}" Width="200">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsError}" Value="True">
+                                            <Setter Property="Foreground" Value="Red"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Лексема" Binding="{Binding Value}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Местоположение" Binding="{Binding Location}" Width="150"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Border>
         </Grid>
 
         <!-- Строка состояния -->
-        <StatusBar Grid.Row="2" Grid.ColumnSpan="2" Margin="0,501,0,0" Grid.RowSpan="2">
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="2">
             <StatusBarItem>
                 <TextBlock x:Name="StatusText" Text="Готов"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="StatsText" Text="Лексем: 0 | Ошибок: 0"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>
